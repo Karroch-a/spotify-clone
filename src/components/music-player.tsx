@@ -50,7 +50,12 @@ export function MusicPlayer() {
     ? likedSongs.some((s) => s.id === currentSong.id)
     : false;
 
-  // Update local progress when global progress changes (if not dragging)
+  const togglePlayPause = useCallback(() => {
+    if (currentSong) {
+      playSong(currentSong);
+    }
+  }, [currentSong, playSong]);
+
   useEffect(() => {
     if (!isDraggingProgress) {
       setLocalProgress(progress);
@@ -87,9 +92,8 @@ export function MusicPlayer() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [togglePlayPause]);
 
-  // Handle volume slider dragging
   useEffect(() => {
     if (!isDraggingVolume) return;
 
@@ -118,7 +122,6 @@ export function MusicPlayer() {
     };
   }, [isDraggingVolume, isMuted]);
 
-  // Handle progress slider dragging
   useEffect(() => {
     if (!isDraggingProgress) return;
 
@@ -234,12 +237,6 @@ export function MusicPlayer() {
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }, []);
-
-  const togglePlayPause = useCallback(() => {
-    if (currentSong) {
-      playSong(currentSong);
-    }
-  }, [currentSong, playSong]);
 
   const handleLike = useCallback(() => {
     if (currentSong) {

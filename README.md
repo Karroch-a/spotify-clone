@@ -2,6 +2,13 @@
 
 A modern, responsive Spotify clone built with Next.js, TypeScript, and Tailwind CSS. This project demonstrates how to build a music streaming application with a clean, professional UI and state management.
 
+## Screenshots
+
+![Spotify Clone Screenshot](/public/screenshots/Screenshot%202025-07-13%20at%2016.39.36.png)
+![Spotify Clone Screenshot](/public/screenshots/Screenshot%202025-07-13%20at%2016.39.29.png)
+![Spotify Clone Screenshot](/public/screenshots/Screenshot%202025-07-13%20at%2016.39.12.png)
+![Spotify Clone Screenshot](/public/screenshots/Screenshot%202025-07-13%20at%2016.38.57.png)
+
 ## Features
 
 - Music player with play/pause, progress tracking, and volume control
@@ -95,4 +102,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Disclaimer
 
 This is a demo project and is not affiliated with Spotify. It is intended for educational purposes only.
+
 # spotify-clone

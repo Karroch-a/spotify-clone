@@ -113,9 +113,9 @@ export default function SongPage() {
 
   return (
     <>
-      <div className="bg-gradient-to-b from-blue-900 via-blue-900/70 to-black p-8">
-        <div className="flex items-end gap-6 max-w-screen-xl mx-auto">
-          <div className="w-60 h-60 flex-shrink-0 shadow-2xl">
+      <div className="bg-gradient-to-b from-blue-900 via-blue-900/70 to-black p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:items-end gap-6 max-w-screen-xl mx-auto">
+          <div className="w-40 h-40 md:w-60 md:h-60 mx-auto md:mx-0 flex-shrink-0 shadow-2xl">
             <img
               src={song.image}
               alt={`${song.title} album cover`}
@@ -124,17 +124,19 @@ export default function SongPage() {
             />
           </div>
 
-          <div className="flex flex-col gap-2 pb-4 min-w-0">
-            <span className="text-sm font-medium text-white/90">Song</span>
-            <h1 className="text-6xl lg:text-7xl font-black mb-4 leading-tight break-words">
+          <div className="flex flex-col gap-2 pb-4 min-w-0 text-center md:text-left">
+            <span className="text-xs md:text-sm font-medium text-white/90">
+              Song
+            </span>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-2 md:mb-4 leading-tight break-words">
               {song.title}
             </h1>
 
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm">
               <img
                 src="/images/ed_sheeran.jpg"
                 alt={song.artist}
-                className="w-6 h-6 rounded-full"
+                className="w-5 h-5 md:w-6 md:h-6 rounded-full"
               />
               <span className="font-medium">
                 <span className="hover:underline cursor-pointer text-white">
@@ -161,16 +163,16 @@ export default function SongPage() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-black/50 to-black px-8 py-6">
-        <div className="max-w-screen-xl mx-auto flex items-center gap-6">
+      <div className="bg-gradient-to-b from-black/50 to-black px-4 sm:px-6 md:px-8 py-6">
+        <div className="max-w-screen-xl mx-auto flex items-center gap-4 md:gap-6">
           <Button
             onClick={() => playSong(song)}
-            className="w-14 h-14 bg-green-500 hover:bg-green-400 hover:scale-105 rounded-full transition-all duration-200 shadow-lg"
+            className="w-12 h-12 md:w-14 md:h-14 bg-green-500 hover:bg-green-400 hover:scale-105 rounded-full transition-all duration-200 shadow-lg"
           >
             {isCurrentSong && isPlaying ? (
-              <Pause className="w-6 h-6 text-black fill-current" />
+              <Pause className="w-5 h-5 md:w-6 md:h-6 text-black fill-current" />
             ) : (
-              <Play className="w-6 h-6 text-black fill-current ml-0.5" />
+              <Play className="w-5 h-5 md:w-6 md:h-6 text-black fill-current ml-0.5" />
             )}
           </Button>
 
@@ -178,38 +180,44 @@ export default function SongPage() {
             variant="ghost"
             size="icon"
             onClick={handleLikeSong}
-            className={`w-12 h-12 transition-all duration-200 ${
+            className={`w-10 h-10 md:w-12 md:h-12 transition-all duration-200 ${
               songIsLiked
                 ? "text-green-500 hover:text-green-400"
                 : "text-zinc-400 hover:text-white hover:scale-105"
             }`}
           >
-            <Heart className={`w-6 h-6 ${songIsLiked ? "fill-current" : ""}`} />
+            <Heart
+              className={`w-5 h-5 md:w-6 md:h-6 ${
+                songIsLiked ? "fill-current" : ""
+              }`}
+            />
           </Button>
 
           <Button
             variant="ghost"
             size="icon"
-            className="w-12 h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
+            className="w-10 h-10 md:w-12 md:h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
           >
-            <Download className="w-6 h-6" />
+            <Download className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
 
           <Button
             variant="ghost"
             size="icon"
-            className="w-12 h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
+            className="w-10 h-10 md:w-12 md:h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
           >
-            <MoreHorizontal className="w-6 h-6" />
+            <MoreHorizontal className="w-5 h-5 md:w-6 md:h-6" />
           </Button>
         </div>
       </div>
 
       {song.lyrics && song.lyrics.length > 0 && (
-        <div className="px-8 py-8 bg-black">
+        <div className="px-4 sm:px-6 md:px-8 py-8 bg-black">
           <div className="max-w-screen-xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-white">Lyrics</h2>
-            <div className="text-lg leading-relaxed text-zinc-200 space-y-2">
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white">
+              Lyrics
+            </h2>
+            <div className="text-base md:text-lg leading-relaxed text-zinc-200 space-y-2">
               {lyricsToShow.map((line, index) => (
                 <p
                   key={index}
@@ -243,18 +251,20 @@ export default function SongPage() {
         </div>
       )}
 
-      <div className="px-8 py-8 bg-black">
+      <div className="px-4 sm:px-6 md:px-8 py-8 bg-black">
         <div className="max-w-screen-xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6 text-white">Recommended</h2>
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white">
+            Recommended
+          </h2>
           <div className="space-y-1">
             {relatedSongs.map((relatedSong) => (
               <div
                 key={relatedSong.id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-zinc-800/50 cursor-pointer group transition-all duration-200"
+                className="flex items-center justify-between p-2 sm:p-3 rounded-lg hover:bg-zinc-800/50 cursor-pointer group transition-all duration-200"
                 onClick={() => playSong(relatedSong)}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 relative flex-shrink-0">
+                <div className="flex items-center gap-2 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 relative flex-shrink-0">
                     <img
                       src={relatedSong.image}
                       alt={relatedSong.title}
@@ -265,7 +275,7 @@ export default function SongPage() {
                     </div>
                   </div>
 
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 max-w-[120px] sm:max-w-none">
                     <p className="text-sm font-medium text-white truncate">
                       {relatedSong.title}
                     </p>
@@ -275,7 +285,7 @@ export default function SongPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -296,7 +306,7 @@ export default function SongPage() {
                     />
                   </Button>
 
-                  <span className="text-sm text-zinc-400 w-12 text-right">
+                  <span className="text-sm text-zinc-400 w-12 text-right hidden sm:inline">
                     {formatDuration(relatedSong.duration)}
                   </span>
 

@@ -136,33 +136,35 @@ export default function PlaylistPage() {
   if (playlist && playlist.songs.length === 0) {
     return (
       <>
-        <div className="bg-gradient-to-b from-slate-700 to-slate-900 px-8 py-6">
-          <div className="flex items-end gap-6">
-            <div className="w-60 h-60 bg-gradient-to-br from-purple-700 to-blue-300 flex items-center justify-center text-8xl font-bold text-white shadow-2xl">
+        <div className="bg-gradient-to-b from-slate-700 to-slate-900 px-4 sm:px-6 md:px-8 py-6">
+          <div className="flex flex-col md:flex-row md:items-end gap-6">
+            <div className="w-40 h-40 md:w-60 md:h-60 mx-auto md:mx-0 bg-gradient-to-br from-purple-700 to-blue-300 flex items-center justify-center text-6xl md:text-8xl font-bold text-white shadow-2xl">
               ♫
             </div>
-            <div className="pb-8">
-              <p className="text-sm font-medium mb-2">PUBLIC PLAYLIST</p>
-              <h1 className="text-6xl font-black mb-6 tracking-tight">
+            <div className="text-center md:text-left md:pb-8">
+              <p className="text-xs md:text-sm font-medium mb-2">
+                PUBLIC PLAYLIST
+              </p>
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 tracking-tight">
                 {playlist.name}
               </h1>
-              <p className="text-gray-300 text-lg mb-4">
+              <p className="text-gray-300 text-base md:text-lg mb-4">
                 {playlist.description}
               </p>
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm">
                 <span className="font-semibold">Spotify</span>
                 <span className="text-gray-400">• 0 songs</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="px-8 py-16 text-center">
-          <h2 className="text-2xl font-bold mb-4">
+        <div className="px-4 sm:px-6 md:px-8 py-16 text-center">
+          <h2 className="text-xl md:text-2xl font-bold mb-4">
             {playlist.id === "liked-songs"
               ? "Songs you like will appear here"
               : "Start by adding some songs"}
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-base md:text-lg">
             {playlist.id === "liked-songs"
               ? "Save songs by tapping the heart icon."
               : "Search for songs and albums to add to this playlist."}
@@ -176,24 +178,26 @@ export default function PlaylistPage() {
     <>
       {playlist && (
         <div>
-          <div className="bg-gradient-to-b from-slate-700 to-slate-900 px-8 py-6">
-            <div className="flex items-end gap-6">
-              <div className="w-60 h-60 flex-shrink-0 shadow-2xl">
+          <div className="bg-gradient-to-b from-slate-700 to-slate-900 px-4 sm:px-6 md:px-8 py-6">
+            <div className="flex flex-col md:flex-row md:items-end gap-6">
+              <div className="w-40 h-40 md:w-60 md:h-60 mx-auto md:mx-0 flex-shrink-0 shadow-2xl">
                 <img
                   src={playlist.image}
                   alt={playlist.name}
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="pb-8">
-                <p className="text-sm font-medium mb-2">PUBLIC PLAYLIST</p>
-                <h1 className="text-6xl font-black mb-6 tracking-tight">
+              <div className="text-center md:text-left md:pb-8">
+                <p className="text-xs md:text-sm font-medium mb-2">
+                  PUBLIC PLAYLIST
+                </p>
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 tracking-tight">
                   {playlist.name}
                 </h1>
-                <p className="text-gray-300 text-lg mb-4">
+                <p className="text-gray-300 text-base md:text-lg mb-4">
                   {playlist.description}
                 </p>
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm">
                   <span className="font-semibold">Spotify</span>
                   <span className="text-gray-400">
                     • {playlist.songs.length} songs,{" "}
@@ -202,148 +206,148 @@ export default function PlaylistPage() {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="bg-gradient-to-b from-slate-900/60 to-black px-8 py-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <Button
-                    onClick={handlePlayPlaylist}
-                    className="w-14 h-14 bg-green-500 hover:bg-green-400 hover:scale-105 transition-all duration-200 rounded-full shadow-lg"
-                    disabled={playlist.songs.length === 0}
-                  >
-                    {isPlaying &&
-                    playlist.songs.some(
-                      (song) => song.id === currentSong?.id
-                    ) ? (
-                      <Pause className="w-6 h-6 text-black" />
-                    ) : (
-                      <Play className="w-6 h-6 text-black ml-1" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-10 h-10 text-zinc-400 hover:text-white"
-                  >
-                    <Download className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-10 h-10 text-zinc-400 hover:text-white"
-                  >
-                    <MoreHorizontal className="w-5 h-5" />
-                  </Button>
-                </div>
+          <div className="bg-gradient-to-b from-black/50 to-black px-4 sm:px-6 md:px-8 py-6">
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={handlePlayPlaylist}
+                className="w-12 h-12 md:w-14 md:h-14 bg-green-500 hover:bg-green-400 hover:scale-105 rounded-full transition-all duration-200 shadow-lg"
+              >
+                {isPlaying &&
+                currentSong &&
+                playlist.songs.some((song) => song.id === currentSong.id) ? (
+                  <Pause className="w-5 h-5 md:w-6 md:h-6 text-black fill-current" />
+                ) : (
+                  <Play className="w-5 h-5 md:w-6 md:h-6 text-black fill-current ml-0.5" />
+                )}
+              </Button>
 
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    className="text-zinc-400 hover:text-white text-sm"
-                  >
-                    <List className="w-4 h-4 mr-2" />
-                    List view
-                  </Button>
-                </div>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 md:w-12 md:h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
+              >
+                <Download className="w-5 h-5 md:w-6 md:h-6" />
+              </Button>
 
-              <div className="mt-8">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-zinc-700/50">
-                      <th className="pb-2 pl-4 w-12">#</th>
-                      <th className="pb-2">Title</th>
-                      <th className="pb-2">Album</th>
-                      <th className="pb-2 text-right pr-8">
-                        <Clock className="w-4 h-4" />
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {playlist.songs.map((song, index) => {
-                      const isCurrentlyPlaying =
-                        isPlaying && currentSong?.id === song.id;
-                      const songIsLiked = isLiked(song.id);
-
-                      return (
-                        <tr
-                          key={song.id}
-                          className="group hover:bg-white/10 transition-colors"
-                          onClick={() => handlePlaySong(song)}
-                        >
-                          <td className="py-3 pl-4 w-12">
-                            <div className="w-4 text-center">
-                              {isCurrentlyPlaying ? (
-                                <div className="w-3 h-3 bg-green-500 rounded-sm animate-pulse mx-auto" />
-                              ) : (
-                                <span className="text-zinc-400 group-hover:hidden">
-                                  {index + 1}
-                                </span>
-                              )}
-                              {!isCurrentlyPlaying && (
-                                <Play className="w-3 h-3 text-white hidden group-hover:block" />
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-3">
-                            <div className="flex items-center gap-4">
-                              <img
-                                src={song.image}
-                                alt={song.title}
-                                className="w-10 h-10 rounded"
-                              />
-                              <div>
-                                <p
-                                  className={`font-medium ${
-                                    isCurrentlyPlaying
-                                      ? "text-green-500"
-                                      : "text-white"
-                                  }`}
-                                >
-                                  {song.title}
-                                </p>
-                                <p className="text-zinc-400">{song.artist}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3 text-zinc-400">{song.album}</td>
-                          <td className="py-3 text-right pr-8">
-                            <div className="flex items-center justify-end gap-4">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`w-8 h-8 ${
-                                  songIsLiked
-                                    ? "text-green-500"
-                                    : "text-zinc-400 opacity-0 group-hover:opacity-100"
-                                } hover:text-white transition-all`}
-                                onClick={(e) => handleLikeSong(e, song)}
-                              >
-                                <Heart
-                                  className={`w-4 h-4 ${
-                                    songIsLiked ? "fill-current" : ""
-                                  }`}
-                                />
-                              </Button>
-                              <span className="text-zinc-400">
-                                {formatDuration(song.duration)}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="w-8 h-8 text-zinc-400 opacity-0 group-hover:opacity-100 hover:text-white transition-all"
-                              >
-                                <MoreHorizontal className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 md:w-12 md:h-12 text-zinc-400 hover:text-white hover:scale-105 transition-all duration-200"
+              >
+                <MoreHorizontal className="w-5 h-5 md:w-6 md:h-6" />
+              </Button>
             </div>
+          </div>
+
+          <div className="px-4 sm:px-6 md:px-8 py-4">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left text-xs text-zinc-400 border-b border-zinc-700">
+                  <th className="px-4 py-2 w-10">#</th>
+                  <th className="px-4 py-2">Title</th>
+                  <th className="px-4 py-2 hidden md:table-cell">Album</th>
+                  <th className="px-4 py-2 hidden lg:table-cell">Date added</th>
+                  <th className="px-4 py-2 text-right">
+                    <Clock className="w-4 h-4 inline" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {playlist.songs.map((song, index) => {
+                  const isCurrentlyPlaying =
+                    isPlaying && currentSong?.id === song.id;
+                  const songIsLiked = isLiked(song.id);
+
+                  return (
+                    <tr
+                      key={song.id}
+                      className="group hover:bg-white/10 text-zinc-300 hover:text-white cursor-pointer"
+                      onClick={() => handlePlaySong(song)}
+                    >
+                      <td className="px-4 py-3 w-10 text-center">
+                        {isCurrentlyPlaying ? (
+                          <div className="w-4 h-4 text-green-500">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              className="w-full h-full"
+                            >
+                              <path d="M8 5.14v14l11-7-11-7z" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-400 group-hover:hidden">
+                            {index + 1}
+                          </span>
+                        )}
+                        {!isCurrentlyPlaying && (
+                          <div className="w-4 h-4 text-white hidden group-hover:block">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              className="w-full h-full"
+                            >
+                              <path d="M8 5.14v14l11-7-11-7z" />
+                            </svg>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-zinc-800 flex-shrink-0">
+                            <img
+                              src={song.image}
+                              alt={song.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <div
+                              className={`font-medium ${
+                                isCurrentlyPlaying ? "text-green-500" : ""
+                              }`}
+                            >
+                              {song.title}
+                            </div>
+                            <div className="text-xs text-zinc-400">
+                              {song.artist}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 hidden md:table-cell">
+                        {song.album || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-zinc-400 text-sm hidden lg:table-cell">
+                        {new Date().toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-right text-zinc-400 text-sm">
+                        <div className="flex items-center justify-end gap-4">
+                          <button
+                            onClick={(e) => handleLikeSong(e, song)}
+                            className={`opacity-0 group-hover:opacity-100 transition-opacity ${
+                              songIsLiked ? "text-green-500 opacity-100" : ""
+                            }`}
+                          >
+                            <Heart
+                              className={`w-4 h-4 ${
+                                songIsLiked ? "fill-current" : ""
+                              }`}
+                            />
+                          </button>
+                          <span>{formatDuration(song.duration)}</span>
+                          <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

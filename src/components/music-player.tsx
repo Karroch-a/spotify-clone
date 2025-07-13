@@ -14,13 +14,15 @@ import {
   Repeat,
   VolumeX,
   Volume1,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 
 const MIN_VOLUME = 0;
 const MAX_VOLUME = 100;
 const VOLUME_THRESHOLD = 50;
 
-export function MusicPlayer() {
+export function MusicPlayer({ isMobile }: { isMobile: boolean }) {
   const {
     currentSong,
     isPlaying,
@@ -42,6 +44,7 @@ export function MusicPlayer() {
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
   const [localProgress, setLocalProgress] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const volumeBarRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -56,13 +59,16 @@ export function MusicPlayer() {
     }
   }, [currentSong, playSong]);
 
+  const toggleExpand = useCallback(() => {
+    setIsExpanded((prev) => !prev);
+  }, []);
+
   useEffect(() => {
     if (!isDraggingProgress) {
       setLocalProgress(progress);
     }
   }, [progress, isDraggingProgress]);
 
-  // Update audio volume when volume state changes
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -70,7 +76,6 @@ export function MusicPlayer() {
     audio.volume = isMuted ? 0 : volume / 100;
   }, [volume, isMuted, audioRef]);
 
-  // Handle keyboard shortcuts
   useEffect(() => {
     const isTypingInFormElement = () => {
       const activeElement = document.activeElement;
@@ -199,164 +204,291 @@ export function MusicPlayer() {
     [handleProgressClick]
   );
 
-  const handleVolumeClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!audioRef.current) return;
+  const formatTime = (time: number) => {
+    if (!time) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
-      const rect = e.currentTarget.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const newVolume = Math.round((clickX / rect.width) * 100);
+  if (!currentSong) return null;
 
-      setVolume(Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, newVolume)));
-      if (isMuted) setIsMuted(false);
-    },
-    [audioRef, isMuted]
-  );
-
-  const handleVolumeMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      setIsDraggingVolume(true);
-      handleVolumeClick(e);
-    },
-    [handleVolumeClick]
-  );
-
-  const toggleMute = useCallback(() => {
-    if (isMuted) {
-      setIsMuted(false);
-      setVolume(previousVolume);
-    } else {
-      setPreviousVolume(volume);
-      setIsMuted(true);
-    }
-  }, [isMuted, volume, previousVolume]);
-
-  const formatTime = useCallback((seconds: number): string => {
-    if (!seconds || isNaN(seconds)) return "0:00";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }, []);
-
-  const handleLike = useCallback(() => {
-    if (currentSong) {
-      toggleLikeSong(currentSong);
-    }
-  }, [currentSong, toggleLikeSong]);
-
-  if (!currentSong) {
-    return null;
-  }
-
-  const actualDuration = duration || currentSong.duration;
-  const displayProgress = isDraggingProgress ? localProgress : progress;
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 border-t border-zinc-700 px-4 py-3 z-50">
-      <div className="flex items-center justify-between max-w-screen-2xl mx-auto">
-        <div className="flex items-center gap-4 min-w-0 w-80">
-          <img
-            src={currentSong.image}
-            alt={currentSong.title}
-            className="w-14 h-14 rounded object-cover"
-          />
-          <div className="min-w-0 flex-1">
-            <h4 className="text-white font-medium text-sm truncate">
-              {currentSong.title}
-            </h4>
-            <p className="text-zinc-400 text-xs truncate">
-              {currentSong.artist}
-            </p>
-          </div>
+  if (isMobile && isExpanded) {
+    return (
+      <div className="fixed inset-0 bg-black z-50 flex flex-col p-4">
+        <div className="flex justify-end mb-4">
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleLike}
-            className={`w-8 h-8 ${
-              isLiked ? "text-green-500" : "text-zinc-400 hover:text-white"
-            }`}
+            className="text-white"
+            onClick={toggleExpand}
           >
-            <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+            <Minimize2 className="w-6 h-6" />
           </Button>
         </div>
 
-        <div className="flex flex-col items-center gap-2 flex-1 max-w-2xl">
-          <div className="flex items-center gap-2">
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="w-64 h-64 mb-8 bg-zinc-800 rounded-md overflow-hidden">
+            <img
+              src={currentSong.image}
+              alt={currentSong.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="text-center mb-8 w-full px-4">
+            <h3 className="text-white font-bold text-xl truncate">
+              {currentSong.title}
+            </h3>
+            <p className="text-zinc-400 text-sm truncate">
+              {currentSong.artist}
+            </p>
+          </div>
+
+          <div className="w-full px-4 mb-4">
+            <div
+              className="h-1 bg-zinc-700 rounded-full w-full cursor-pointer relative"
+              ref={progressBarRef}
+              onClick={handleProgressClick}
+              onMouseDown={handleProgressMouseDown}
+            >
+              <div
+                className="absolute top-0 left-0 h-full bg-white rounded-full"
+                style={{ width: `${localProgress}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-zinc-400">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration || currentSong.duration)}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-8 mb-8">
             <Button
               variant="ghost"
               size="icon"
-              className="w-8 h-8 text-zinc-400 hover:text-white"
+              className="text-zinc-400 hover:text-white"
             >
-              <Shuffle className="w-4 h-4" />
+              <Shuffle className="w-5 h-5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="w-8 h-8 text-zinc-400 hover:text-white"
+              className="text-zinc-400 hover:text-white"
             >
-              <SkipBack className="w-4 h-4" />
+              <SkipBack className="w-6 h-6" />
             </Button>
             <Button
               onClick={togglePlayPause}
-              className="w-10 h-10 bg-white hover:bg-gray-200 text-black rounded-full"
+              className="w-14 h-14 rounded-full bg-white text-black hover:bg-gray-200 flex items-center justify-center"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 fill-current" />
+                <Pause className="w-8 h-8 text-black fill-current" />
               ) : (
-                <Play className="w-5 h-5 fill-current ml-1" />
+                <Play className="w-8 h-8 text-black fill-current" />
               )}
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="w-8 h-8 text-zinc-400 hover:text-white"
+              className="text-zinc-400 hover:text-white"
             >
-              <SkipForward className="w-4 h-4" />
+              <SkipForward className="w-6 h-6" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="w-8 h-8 text-zinc-400 hover:text-white"
+              className="text-zinc-400 hover:text-white"
             >
-              <Repeat className="w-4 h-4" />
+              <Repeat className="w-5 h-5" />
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 w-full max-w-md">
-            <span className="text-xs text-zinc-400 w-10 text-right">
-              {formatTime(currentTime)}
-            </span>
-            <div
-              ref={progressBarRef}
-              className="flex-1 h-1 bg-zinc-600 rounded-full cursor-pointer group"
-              onClick={handleProgressClick}
-              onMouseDown={handleProgressMouseDown}
+          <div className="flex items-center justify-between w-full px-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`text-zinc-400 hover:text-white ${
+                isLiked ? "text-green-500" : ""
+              }`}
+              onClick={() => toggleLikeSong(currentSong)}
             >
+              <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
+            </Button>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-zinc-400 hover:text-white"
+                onClick={() => {
+                  if (isMuted || volume === 0) {
+                    setIsMuted(false);
+                    setVolume(previousVolume || 70);
+                  } else {
+                    setPreviousVolume(volume);
+                    setIsMuted(true);
+                  }
+                }}
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="w-5 h-5" />
+                ) : volume < VOLUME_THRESHOLD ? (
+                  <Volume1 className="w-5 h-5" />
+                ) : (
+                  <Volume2 className="w-5 h-5" />
+                )}
+              </Button>
+
               <div
-                className="h-full bg-white hover:bg-green-500 rounded-full relative"
-                style={{ width: `${displayProgress}%` }}
+                className="w-24 h-1 bg-zinc-700 rounded-full cursor-pointer relative"
+                ref={volumeBarRef}
+                onClick={(e) => {
+                  const rect = volumeBarRef.current?.getBoundingClientRect();
+                  if (!rect) return;
+                  const clickX = e.clientX - rect.left;
+                  const percentage = (clickX / rect.width) * 100;
+                  setVolume(
+                    Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, percentage))
+                  );
+                  if (isMuted) setIsMuted(false);
+                }}
               >
                 <div
-                  className={`absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full ${
-                    isDraggingProgress
-                      ? "opacity-100"
-                      : "opacity-0 group-hover:opacity-100"
-                  } transition-opacity`}
+                  className="absolute top-0 left-0 h-full bg-white rounded-full"
+                  style={{ width: `${isMuted ? 0 : volume}%` }}
                 />
               </div>
             </div>
-            <span className="text-xs text-zinc-400 w-10">
-              {formatTime(actualDuration)}
-            </span>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        <div className="flex items-center gap-2 w-80 justify-end">
+  return (
+    <div className="fixed bottom-0 left-0 right-0 h-20 bg-zinc-900 border-t border-zinc-800 px-4 flex items-center justify-between z-40">
+      <div className="flex items-center gap-3 w-1/4 min-w-0">
+        {currentSong && (
+          <>
+            <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden flex-shrink-0">
+              <img
+                src={currentSong.image}
+                alt={currentSong.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0 hidden sm:block">
+              <h4 className="text-white font-medium text-sm truncate">
+                {currentSong.title}
+              </h4>
+              <p className="text-zinc-400 text-xs truncate">
+                {currentSong.artist}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`text-zinc-400 hover:text-white ${
+                isLiked ? "text-green-500" : ""
+              } hidden sm:flex`}
+              onClick={() => toggleLikeSong(currentSong)}
+            >
+              <Heart className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`} />
+            </Button>
+          </>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center justify-center flex-1 max-w-md">
+        <div className="flex items-center gap-2 md:gap-4 mb-1">
           <Button
             variant="ghost"
             size="icon"
-            onClick={toggleMute}
-            className="w-8 h-8 text-zinc-400 hover:text-white"
+            className="text-zinc-400 hover:text-white w-8 h-8 hidden sm:flex"
+          >
+            <Shuffle className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-400 hover:text-white w-8 h-8"
+          >
+            <SkipBack className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={togglePlayPause}
+            className="w-8 h-8 rounded-full bg-white text-black hover:bg-gray-200 flex items-center justify-center"
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4 text-black fill-current" />
+            ) : (
+              <Play className="w-4 h-4 text-black fill-current" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-400 hover:text-white w-8 h-8"
+          >
+            <SkipForward className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-400 hover:text-white w-8 h-8 hidden sm:flex"
+          >
+            <Repeat className="w-4 h-4" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2 w-full">
+          <span className="text-xs text-zinc-400 hidden sm:block">
+            {formatTime(currentTime)}
+          </span>
+          <div
+            className="h-1 bg-zinc-700 rounded-full flex-1 cursor-pointer relative"
+            ref={progressBarRef}
+            onClick={handleProgressClick}
+            onMouseDown={handleProgressMouseDown}
+          >
+            <div
+              className="absolute top-0 left-0 h-full bg-white rounded-full"
+              style={{ width: `${localProgress}%` }}
+            />
+          </div>
+          <span className="text-xs text-zinc-400 hidden sm:block">
+            {formatTime(duration || currentSong.duration)}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 justify-end w-1/4">
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-400 hover:text-white"
+            onClick={toggleExpand}
+          >
+            <Maximize2 className="w-5 h-5" />
+          </Button>
+        )}
+
+        <div className="hidden md:flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-zinc-400 hover:text-white w-8 h-8"
+            onClick={() => {
+              if (isMuted || volume === 0) {
+                setIsMuted(false);
+                setVolume(previousVolume || 70);
+              } else {
+                setPreviousVolume(volume);
+                setIsMuted(true);
+              }
+            }}
           >
             {isMuted || volume === 0 ? (
               <VolumeX className="w-4 h-4" />
@@ -367,28 +499,30 @@ export function MusicPlayer() {
             )}
           </Button>
           <div
+            className="w-24 h-1 bg-zinc-700 rounded-full cursor-pointer relative"
             ref={volumeBarRef}
-            className="w-24 h-5 flex items-center cursor-pointer "
-            onClick={handleVolumeClick}
-            onMouseDown={handleVolumeMouseDown}
+            onClick={(e) => {
+              const rect = volumeBarRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              const clickX = e.clientX - rect.left;
+              const percentage = (clickX / rect.width) * 100;
+              setVolume(Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, percentage)));
+              if (isMuted) setIsMuted(false);
+            }}
+            onMouseDown={(e) => {
+              setIsDraggingVolume(true);
+              const rect = volumeBarRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              const clickX = e.clientX - rect.left;
+              const percentage = (clickX / rect.width) * 100;
+              setVolume(Math.max(MIN_VOLUME, Math.min(MAX_VOLUME, percentage)));
+              if (isMuted) setIsMuted(false);
+            }}
           >
-            <div className="w-full h-1 bg-zinc-600 rounded-full relative">
-              <div
-                className="h-full bg-white  rounded-full"
-                style={{ width: `${isMuted ? 0 : volume}%` }}
-              />
-              <div
-                className={`absolute h-3 w-3 bg-white  rounded-full top-1/2 -translate-y-1/2 ${
-                  isDraggingVolume
-                    ? "opacity-100"
-                    : "group-hover:opacity-100 opacity-0"
-                } transition-opacity`}
-                style={{
-                  left: `${isMuted ? 0 : volume}%`,
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            </div>
+            <div
+              className="absolute top-0 left-0 h-full bg-white rounded-full"
+              style={{ width: `${isMuted ? 0 : volume}%` }}
+            />
           </div>
         </div>
       </div>

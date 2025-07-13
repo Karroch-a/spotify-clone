@@ -26,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 interface NavButtonProps {
   icon: React.ReactNode;
@@ -184,7 +185,7 @@ export function Header() {
 
   return (
     <>
-      <header className="h-16 bg-black border-b border-zinc-800 flex items-center justify-between px-6 relative z-30">
+      <header className="h-16 bg-black border-b border-zinc-800 flex items-center justify-between px-4 sm:px-6 relative z-30">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <div
@@ -228,8 +229,9 @@ export function Header() {
               key={item.label}
               variant="ghost"
               className={`font-medium ${item.className}`}
+              asChild
             >
-              {item.label}
+              <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
         </div>
@@ -254,7 +256,7 @@ export function Header() {
                 Sign up
               </Button>
               <Button
-                className="bg-white text-black hover:bg-gray-200 hover:scale-105 rounded-full px-8 py-2 font-bold transition-all duration-200"
+                className="bg-white text-black hover:bg-gray-200 hover:scale-105 rounded-full px-6 sm:px-8 py-2 font-bold transition-all duration-200"
                 onClick={openLoginModal}
               >
                 Log in
@@ -284,7 +286,7 @@ export function Header() {
         </div>
       </header>
 
-      <LoginModal isOpen={showLoginModal} onClose={closeLoginModal} />
+      {showLoginModal && <LoginModal onClose={closeLoginModal} />}
     </>
   );
 }

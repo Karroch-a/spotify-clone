@@ -1,8 +1,17 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Library, ExternalLink, Music, Heart } from "lucide-react";
+import {
+  Plus,
+  Library,
+  ExternalLink,
+  Music,
+  Heart,
+  X,
+  Menu,
+  Download,
+} from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -141,17 +150,31 @@ function CreatePlaylistCard({
   );
 }
 
-export function Sidebar() {
+export interface SidebarProps {
+  isMobile?: boolean;
+}
+
+export function Sidebar({ isMobile = false }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLibraryHovered, setIsLibraryHovered] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isLoggedIn, userPlaylists, likedSongs, isLoading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsCollapsed(true);
+    }
+  }, [isMobile]);
 
   const navigateToPlaylist = useCallback(
     (playlistId: string) => {
       router.push(`/playlist/${playlistId}`);
+      if (isMobile) {
+        setIsMobileMenuOpen(false);
+      }
     },
-    [router]
+    [router, isMobile]
   );
 
   const handleCreatePlaylist = useCallback(() => {
@@ -173,6 +196,98 @@ export function Sidebar() {
   const toggleSidebar = useCallback(() => {
     setIsCollapsed((prev) => !prev);
   }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed bottom-20 left-4 z-50 bg-green-500 text-black rounded-full shadow-lg md:hidden"
+          onClick={toggleMobileMenu}
+        >
+          <Menu className="w-6 h-6" />
+        </Button>
+
+        <div
+          className={cn(
+            "fixed inset-y-0 left-0 z-40 bg-black w-80 transform transition-transform duration-300 ease-in-out md:hidden",
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-zinc-800">
+            <h2 className="text-white text-lg font-bold">Your Library</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-zinc-400"
+              onClick={toggleMobileMenu}
+            >
+              <X className="w-6 h-6" />
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-2">
+              {isLoggedIn && (
+                <div
+                  className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-800/50 cursor-pointer"
+                  onClick={() => navigateToPlaylist("liked-songs")}
+                >
+                  <div className="w-12 h-12 rounded bg-gradient-to-br from-purple-700 to-blue-300 flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-white fill-current" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium text-sm">
+                      Liked Songs
+                    </h4>
+                    <p className="text-zinc-400 text-xs">
+                      {likedSongs.length} songs
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <PlaylistSkeleton key={i} isCollapsed={false} />
+                ))
+              ) : (
+                <>
+                  {visiblePlaylists.map((playlist) => (
+                    <PlaylistItem
+                      key={playlist.id}
+                      id={playlist.id}
+                      name={playlist.name}
+                      description={playlist.description}
+                      onClick={navigateToPlaylist}
+                      isCollapsed={false}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+
+            {showCreatePlaylistSection && (
+              <div className="p-4">
+                <CreatePlaylistCard
+                  title="Create your first playlist"
+                  description="It's easy, we'll help you"
+                  buttonText="Create playlist"
+                  onButtonClick={handleCreatePlaylist}
+                  isCollapsed={false}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div
@@ -198,145 +313,130 @@ export function Sidebar() {
                 <Library className="w-6 h-6 text-zinc-400 hover:text-white transition-colors" />
               </div>
               {isLibraryHovered && (
-                <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-zinc-800 text-white text-sm py-1 px-3 rounded-md whitespace-nowrap z-50">
-                  Open Your Library
+                <div className="absolute left-full ml-2 px-3 py-1.5 bg-zinc-800 rounded text-sm text-white whitespace-nowrap">
+                  Expand Your Library
                 </div>
               )}
             </div>
           ) : (
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={toggleSidebar}
-            >
-              <Library className="w-6 h-6 text-zinc-400 hover:text-white transition-colors" />
-              <span className="text-lg font-semibold text-white">
-                Your Library
-              </span>
-            </div>
-          )}
-
-          {!isCollapsed && (
-            <Tooltip content="Create playlist">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-8 h-8 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:scale-105 transition-all duration-200"
-                onClick={handleCreatePlaylist}
+            <>
+              <div
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={toggleSidebar}
               >
-                <Plus className="w-5 h-5" />
-              </Button>
-            </Tooltip>
+                <Library className="w-6 h-6 text-zinc-400" />
+                <span className="text-white font-bold">Your Library</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-8 h-8 text-zinc-400 hover:text-white hover:bg-zinc-800/50 rounded-full"
+                >
+                  <Plus className="w-5 h-5" />
+                </Button>
+              </div>
+            </>
           )}
         </div>
+
+        {!isCollapsed && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            <Button
+              variant="secondary"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs rounded-full h-7 px-3"
+            >
+              Playlists
+            </Button>
+            <Button
+              variant="secondary"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs rounded-full h-7 px-3"
+            >
+              Artists
+            </Button>
+            <Button
+              variant="secondary"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white text-xs rounded-full h-7 px-3"
+            >
+              Albums
+            </Button>
+          </div>
+        )}
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto scrollbar-hide",
+          isCollapsed ? "p-2" : "p-2"
+        )}
+      >
         {isLoading ? (
-          <div className={cn("space-y-3", isCollapsed ? "px-3 py-4" : "p-6")}>
-            {[...Array(5)].map((_, i) => (
+          <div className="space-y-2">
+            {Array.from({ length: 5 }).map((_, i) => (
               <PlaylistSkeleton key={i} isCollapsed={isCollapsed} />
             ))}
           </div>
         ) : (
-          <>
-            {isLoggedIn &&
-              (userPlaylists.length > 0 || likedSongs.length > 0) && (
-                <div
-                  className={cn(
-                    "border-b border-zinc-800",
-                    isCollapsed ? "px-3 py-4" : "p-6"
-                  )}
-                >
-                  <div className="space-y-2">
-                    {likedSongs.length > 0 && (
-                      <PlaylistItem
-                        id="liked-songs"
-                        name="Liked Songs"
-                        onClick={navigateToPlaylist}
-                        isLikedSongs={true}
-                        songCount={likedSongs.length}
-                        isCollapsed={isCollapsed}
-                      />
-                    )}
-
-                    {visiblePlaylists.map((playlist) => (
-                      <PlaylistItem
-                        key={playlist.id}
-                        id={playlist.id}
-                        name={playlist.name}
-                        description={playlist.description}
-                        onClick={navigateToPlaylist}
-                        isCollapsed={isCollapsed}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-            {showCreatePlaylistSection && (
-              <div
-                className={cn(
-                  "border-b border-zinc-800",
-                  isCollapsed ? "px-3 py-4" : "p-6"
-                )}
-              >
-                <CreatePlaylistCard
-                  title="Create your first playlist"
-                  description="It's easy, we'll help you"
-                  buttonText="Create playlist"
-                  onButtonClick={handleCreatePlaylist}
-                  isCollapsed={isCollapsed}
-                />
-              </div>
-            )}
-
-            <div
-              className={cn(
-                "border-b border-zinc-800",
-                isCollapsed ? "px-3 py-4" : "p-6"
-              )}
-            >
-              <CreatePlaylistCard
-                title="Let's find some podcasts to follow"
-                description="We'll keep you updated on new episodes"
-                buttonText="Browse podcasts"
-                onButtonClick={handleBrowsePodcasts}
+          <div className="space-y-2">
+            {isLoggedIn && (
+              <PlaylistItem
+                id="liked-songs"
+                name="Liked Songs"
+                onClick={navigateToPlaylist}
+                isLikedSongs={true}
+                songCount={likedSongs.length}
                 isCollapsed={isCollapsed}
               />
-            </div>
-          </>
+            )}
+
+            {visiblePlaylists.map((playlist) => (
+              <PlaylistItem
+                key={playlist.id}
+                id={playlist.id}
+                name={playlist.name}
+                description={playlist.description}
+                onClick={navigateToPlaylist}
+                isCollapsed={isCollapsed}
+              />
+            ))}
+          </div>
+        )}
+
+        {showCreatePlaylistSection && !isLoading && (
+          <div className="mt-4">
+            <CreatePlaylistCard
+              title="Create your first playlist"
+              description="It's easy, we'll help you"
+              buttonText="Create playlist"
+              onButtonClick={handleCreatePlaylist}
+              isCollapsed={isCollapsed}
+            />
+
+            <CreatePlaylistCard
+              title="Browse podcasts"
+              description="We'll keep you updated on new episodes"
+              buttonText="Browse podcasts"
+              onButtonClick={handleBrowsePodcasts}
+              isCollapsed={isCollapsed}
+            />
+          </div>
         )}
       </div>
 
-      {!isCollapsed && (
+      {!isCollapsed && isLoggedIn && (
         <div className="p-6 border-t border-zinc-800">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-zinc-400 mb-6">
-            {[
-              "Legal",
-              "Privacy Center",
-              "Privacy Policy",
-              "Cookies",
-              "About Ads",
-              "Accessibility",
-            ].map((link) => (
-              <Link
-                key={link}
-                href="#"
-                className="hover:text-white hover:underline transition-colors duration-200"
-              >
-                {link}
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-zinc-400 hover:text-white text-sm flex items-center gap-2"
+              asChild
+            >
+              <Link href="/download">
+                <Download className="w-5 h-5" />
+                <span>Install App</span>
               </Link>
-            ))}
+            </Button>
           </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-zinc-700 text-white hover:border-white hover:bg-zinc-800 hover:scale-105 transition-all duration-200"
-          >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            English
-          </Button>
         </div>
       )}
     </div>

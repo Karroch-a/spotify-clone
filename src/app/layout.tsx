@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   title: "Spotify - Web Player: Music for everyone",
   description:
     "Spotify is a digital music service that gives you access to millions of songs.",
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 };
 
 export default function RootLayout({
@@ -31,6 +33,7 @@ export default function RootLayout({
       className={`dark ${geistSans.variable} ${geistMono.variable}`}
     >
       <head>
+        <meta name="theme-color" content="#000000" />
         <Script
           crossOrigin="anonymous"
           src="//unpkg.com/same-runtime/dist/index.global.js"

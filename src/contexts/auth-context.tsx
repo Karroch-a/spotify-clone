@@ -161,7 +161,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setDuration(audio.duration);
   }, []);
 
-  // Initialize audio element
   useEffect(() => {
     return configureAudioElement();
   }, [configureAudioElement]);

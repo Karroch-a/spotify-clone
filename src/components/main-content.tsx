@@ -8,19 +8,17 @@ import { GetLoud } from "@/components/get-loud";
 export function MainContent() {
   return (
     <div className="h-full overflow-y-auto bg-gradient-to-b from-zinc-900/20 to-black">
-      <div className="p-6 space-y-8">
-        <div className="pt-4">
-          <h1 className="text-3xl font-bold text-white mb-2">Home</h1>
+      <div className="responsive-padding space-y-4 md:space-y-8">
+        <div className="space-y-6 md:space-y-8 pt-10">
+          <TrendingSongs />
+          <PopularArtists />
+          <PopularAlbums />
+          <PopularRadio />
+          <FeaturedCharts />
+          <GetLoud />
         </div>
 
-        <TrendingSongs />
-        <PopularArtists />
-        <PopularAlbums />
-        <PopularRadio />
-        <FeaturedCharts />
-        <GetLoud />
-
-        <div className="h-32" />
+        <div className="h-24 md:h-32" />
       </div>
     </div>
   );

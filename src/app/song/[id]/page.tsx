@@ -2,10 +2,6 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { Header } from "@/components/header";
-import { Sidebar } from "@/components/sidebar";
-import { SignupBanner } from "@/components/signup-banner";
-import { MusicPlayer } from "@/components/music-player";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -100,7 +96,6 @@ export default function SongPage() {
     return (
       <div className="h-screen bg-black text-white overflow-hidden">
         <div className="flex h-[calc(100vh-64px)]">
-          <Sidebar />
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-pulse">
               <div className="h-8 bg-zinc-800 rounded w-48 mb-4"></div>
@@ -108,8 +103,6 @@ export default function SongPage() {
             </div>
           </div>
         </div>
-        <SignupBanner />
-        <MusicPlayer />
       </div>
     );
   }
@@ -118,13 +111,10 @@ export default function SongPage() {
     return (
       <div className="h-screen bg-black text-white overflow-hidden">
         <div className="flex h-[calc(100vh-64px)]">
-          <Sidebar />
           <div className="flex-1 flex items-center justify-center">
             <p className="text-zinc-400 text-lg">Song not found</p>
           </div>
         </div>
-        <SignupBanner />
-        <MusicPlayer />
       </div>
     );
   }
@@ -132,8 +122,6 @@ export default function SongPage() {
   return (
     <div className="h-screen bg-black text-white overflow-hidden">
       <div className="flex h-[calc(100vh-64px)]">
-        <Sidebar />
-
         <div className="flex-1 overflow-y-auto">
           <div className="bg-gradient-to-b from-blue-900 via-blue-900/70 to-black p-8">
             <div className="flex items-end gap-6 max-w-screen-xl mx-auto">
@@ -346,9 +334,6 @@ export default function SongPage() {
           <div className="h-32" />
         </div>
       </div>
-
-      <SignupBanner />
-      <MusicPlayer />
     </div>
   );
 }

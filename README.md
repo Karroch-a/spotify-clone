@@ -1,7 +1,6 @@
 # Spotify Clone
 
-A modern Spotify clone built with Next.js, TypeScript, and Tailwind CSS. This project demonstrates how to build a music streaming application with a clean, professional UI and state management.
-
+A modern Spotify clone built in just one day using Next.js, TypeScript, and Tailwind CSS. A fast sprint project showcasing a clean music-streaming UI, smooth interactions, and simple state management.
 ## Screenshots
 
 ![Spotify Clone Screenshot](/public/screenshots/Screenshot%202025-07-13%20at%2016.39.36.png)

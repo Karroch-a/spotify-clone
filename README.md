@@ -1,4 +1,4 @@
-# Spotify Clone
+# Spotify Clone — Built in a 1-Day Challenge
 
 A modern Spotify clone built in just one day using Next.js, TypeScript, and Tailwind CSS. A fast sprint project showcasing a clean music-streaming UI, smooth interactions, and simple state management.
 ## Screenshots
